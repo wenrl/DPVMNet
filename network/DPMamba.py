@@ -11,18 +11,6 @@ import torch.nn.functional as F
 
 
 class LearnableScanner(nn.Module):
-    """
-
-    forward ：
-      tokens: (B, M, C)
-      ctx: dict， A, H, W
-
-    inverse：
-      tokens_out: (B, M, C) or (B, C, M) 
-      ctx:  ctx
-    output：
-      x_rec: (B, C, H, W)
-    """
     def __init__(
         self,
         in_dim=64,
@@ -67,13 +55,6 @@ class LearnableScanner(nn.Module):
     
 
     def forward(self, x: torch.Tensor):
-        """
-        x: (B, C, H, W)
-
-        return：
-          tokens: (B,M,C) 或 (B,C,M)
-          ctx: { "A": (B,M,N), "H": H, "W": W }
-        """
         B, C, H, W = x.shape
         assert C == self.in_dim, f"channel mismatch: got {C}, expected {self.in_dim}"
         N = H * W
@@ -150,7 +131,7 @@ class patch_embedding(nn.Module):
         x = self.fusion(x)
         return x
 
-class DPMamba(nn.Module):
+class DPMambaBlock(nn.Module):
     def __init__(self, in_channels, out_channels, first=False, use_att=False, stride=1):
         super().__init__()
         self.att = use_att
@@ -350,7 +331,7 @@ class UPDoubleConv(nn.Module):
         return x + self.residual(residual)
 
 class UNet(nn.Module):
-    def __init__(self, in_channels, out_channels, with_bn=False, blocks=None, block1=DPMamba,
+    def __init__(self, in_channels, out_channels, with_bn=False, blocks=None, block1=DPMambaBlock,
                  block2=UPDoubleConv):
         super().__init__()
         init_channels = 64
@@ -422,6 +403,6 @@ class UNet(nn.Module):
 
 
 
-def CNNlike50(in_channels=1, out_channels=9):
+def DPVMNet(in_channels=1, out_channels=9):
     blocks = [2, 3, 12, 3]
     return UNet(in_channels=in_channels, out_channels=out_channels, with_bn=True, blocks=blocks)
