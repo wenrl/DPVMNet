@@ -13,9 +13,9 @@ from lib.utils_TransUnet import test_single_volume_inference
 from tqdm import tqdm
 from utils.dataset_synapse import Synapse_dataset, RandomGenerator
 
-from network.umamba import CNNlike50 ###best
+from network.DPMamba import DPVMNet 
 
-# torch.cuda.set_device(0)  # 对于程序1
+
 
 # from utils import test_single_volume
 parser = argparse.ArgumentParser()
@@ -117,19 +117,12 @@ if __name__ == "__main__":
     
     run = 1
 
-    model = CNNlike50(in_channels=1, out_channels=9) 
+    model = DPVMNet(in_channels=1, out_channels=9) 
 
     model.load_state_dict(torch.load('./best.pth')) #best.pth
-
-
-
-
-    
-    # model = model.to('cpu')
     print('Model successfully created.')
     test_save_path = './outputs/synapse/ours'
     if not os.path.exists(test_save_path):
         os.makedirs(test_save_path)
-    # trainer = {'Synapse': trainer_synapse,}
-    # trainer[dataset_name](args, model, snapshot_path)
+
     inference(args, model, test_save_path)
