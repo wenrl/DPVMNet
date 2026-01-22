@@ -7,12 +7,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-
-from network.umamba import CNNlike50
-###ablation
+from network.DPMamba import DPVMNet
 
 from trainer import trainer_synapse, trainer_wrl_synapse
-# torch.cuda.set_device(0)  # 对于程序1
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--root_path', type=str,
@@ -91,7 +89,7 @@ if __name__ == "__main__":
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
 
-    model = CNNlike50(in_channels=1, out_channels=9)
+    model = DPVMNet(in_channels=1, out_channels=9)
     model.cuda()
 
     print('Model successfully created.')
